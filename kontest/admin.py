@@ -9,8 +9,20 @@ class TestAdmin(admin.TabularInline):
 class MasalaAdmin(admin.ModelAdmin):
     inlines = [TestAdmin]
 
+class UserKontestRelationAdmin(admin.ModelAdmin):
+    model = UserKontestRelation
+    search_fields = ['user__username']
+    list_filter= ['kontest','user']
+
 admin.site.register(Kontest)
 admin.site.register(Masala, MasalaAdmin)
-admin.site.register(UserKontestRelation)
-admin.site.register(UserMasalaRelation)
+admin.site.register(UserKontestRelation, UserKontestRelationAdmin)
+
+
+class UserMasalaRelationAdmin(admin.ModelAdmin):
+    model = UserMasalaRelation
+    search_fields = ['user__username']
+    list_filter = ['masala','state']
+
+admin.site.register(UserMasalaRelation, UserMasalaRelationAdmin)
 # admin.site.register(Test)

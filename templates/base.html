@@ -260,6 +260,67 @@
     
     
     </script>
+
+
+<script>
+        let countdown;
+        let totalSeconds = 0;
+
+        // Start countdown function
+        function startTimer() {
+            const timeInput = document.getElementById("timeInput").value.trim();
+
+            // Validate and parse the input time
+            const regex = /^([0-9]{2}):([0-9]{2}):([0-9]{2})$/;
+            const match = timeInput.match(regex);
+
+            if (match) {
+                // Parse the input time into hours, minutes, and seconds
+                const hours = parseInt(match[1]);
+                const minutes = parseInt(match[2]);
+                const seconds = parseInt(match[3]);
+
+                // Convert total time into seconds
+                totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+                // Update timer display and start countdown
+                updateTimerDisplay();
+                if (countdown) {
+                    clearInterval(countdown);  // Clear any previous countdown
+                }
+                countdown = setInterval(countdownTimer, 1000); // Update every second
+            } else {
+                alert("Invalid time format. Please use HH:MM:SS.");
+            }
+        }
+
+        // Countdown function
+        function countdownTimer() {
+            if (totalSeconds <= 0) {
+                clearInterval(countdown);  // Stop the countdown when it reaches 0
+                alert("Time's up!");
+            } else {
+                totalSeconds--; // Decrease by 1 second
+                updateTimerDisplay(); // Update the display
+            }
+        }
+
+        // Update the display with the remaining time
+        function updateTimerDisplay() {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            // Format time as HH:MM:SS
+            document.getElementById("timer").textContent =
+                `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        }
+
+        // Helper function to pad single digit numbers with a leading zero
+        function pad(number) {
+            return number < 10 ? "0" + number : number;
+        }
+    </script>
 </body>
 
 </html>

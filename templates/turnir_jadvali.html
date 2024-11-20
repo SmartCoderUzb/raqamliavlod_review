@@ -30,8 +30,8 @@
                             </button>
                         </div>
                     </div>
-                    <div class="w-full h-max flex flex-row justify-start items-start bg-white p-5 rounded-xl box-border overflow-hidden">
-                        <div class="w-full h-max flex flex-col justify-start items-start px-auto">
+                    <div style="height:100%" class="w-full h-max flex flex-row justify-start items-start bg-white p-5 rounded-xl box-border overflow-hidden">
+                        <div style="height:100%;" class="w-full h-max flex flex-col justify-start items-start px-auto">
                             <div class="flex h-full w-full flex-col flex-nowrap box-border">
                                 <div class=" box-border h-max  w-full overflow-x-scroll scrollbar-none bg-white">
                                     <table class="box-border min-w-[1200px] w-full flex-col flex-nowrap items-start justify-center font-body">
@@ -67,7 +67,7 @@
                                                             {{ r.first_name }}
                                                         </td>
                                                         <td class="box-content flex h-fit min-h-[40px] w-full min-w-[160px] flex-wrap items-center justify-center break-words text-center text-base">
-                                                            {{ r.id|togri_yechimlar_soni }}
+                                                            {{ r.num_passed }}
                                                         </td>
                                                         <td class="box-content flex h-fit min-h-[40px] w-full min-w-[160px] flex-wrap items-center justify-center break-words text-center text-base">
                                                             {{ r.id|notogri_yechimlar_soni }}

@@ -9,6 +9,7 @@ MAX_TIME = timedelta(hours=3)
 
 def check_contest_time(fn):
     def wrapper(request, *args, **kwargs):
+        cdown = "03:00:00"
         if request.method == "POST":
             masala = get_object_or_404(Masala, id=kwargs.get('masala_id'))
             current_time = now()
@@ -18,6 +19,7 @@ def check_contest_time(fn):
                 if masala in contest.kontest.masalalar.all():
                     if contest.created_at:
                         time_difference = current_time - contest.created_at
+                        cdown = str(time_difference)
                         if time_difference > MAX_TIME:
                             messages.add_message(request, messages.ERROR, "Sizga test yechish uchun berilgan vaqt tugadi.")
 
@@ -27,6 +29,6 @@ def check_contest_time(fn):
                         contest.save()
                     break
 
-        return fn(request, *args, **kwargs)
+        return fn(request, cdown=cdown, *args, **kwargs)
 
     return wrapper

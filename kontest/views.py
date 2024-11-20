@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -84,7 +85,7 @@ def kontest_qatnashuvchilar(request, kontest_id):
 @csrf_exempt
 @login_required(login_url="/users/login/")
 @check_contest_time
-def masala_detail(request, masala_id):
+def masala_detail(request, masala_id, cdown="03:00:00"):
     masala = get_object_or_404(Masala, id=masala_id)
     if masala.hidden:
         return redirect("/")
@@ -100,38 +101,60 @@ def masala_detail(request, masala_id):
         else:
             print(form.errors)
     user_results = UserMasalaRelation.objects.filter(user=request.user, masala=masala)
+
+    time_content = f"<div id=\"timer\">{cdown}</div>"
+
     return render(request, 'masala_detail.html', {
         'masala':masala,
         'pagename':'kontest',
-        'results':user_results
+        'results':user_results,
+        'user_time_content_html': time_content
     })
 
 def turnir_jadvali(request, kontest_id):
     kontest = get_object_or_404(Kontest, id=kontest_id)
-    ratings = User.objects.filter(
-        kontests__kontest_id=kontest_id,  # Filter users who participated in the contest
-        ishlangan_masalalar__state='🟢 Passed'  # Filter users who passed at least one masala
+    users = User.objects.filter(kontests__kontest_id=kontest_id)
+    ratings = users.filter(
+        ishlangan_masalalar__state='🟢 Passed'
     ).annotate(
-        num_passed=models.Count('ishlangan_masalalar', filter=models.Q(ishlangan_masalalar__state='🟢 Passed')),  # Count passed masalalar for each user
-        total_ball=models.Sum('ishlangan_masalalar__masala__ball', filter=models.Q(ishlangan_masalalar__state='🟢 Passed'))  # Sum of balls for passed masalalar
-    ).order_by(
-        '-total_ball'  # Order by total_ball descending
-    )
+        num_passed=models.Count('ishlangan_masalalar', filter=models.Q(ishlangan_masalalar__state='🟢 Passed'), distinct=True),  # Count passed masalalar for each user
+        total_ball=models.Sum('ishlangan_masalalar__masala__ball', filter=models.Q(ishlangan_masalalar__state='🟢 Passed'), distinct=True)  # Sum of balls for passed masalalar
+    ).order_by("-num_passed")
+
+
+
     return render(request, 'turnir_jadvali.html', {
         'reyting':ratings,
         'kontest':kontest,
         'pagename':'kontest'
     })
 
+#u.ishlangan_masalalar.filter(state__contains="Passed").values("masala").distinct().aggregate(models.Sum("masala__ball"))["masala__ball__sum"]
+
 def reyting(request):
     users = User.objects.filter(
         ishlangan_masalalar__state='🟢 Passed'
     ).annotate(
-        num_passed=models.Count('ishlangan_masalalar', filter=models.Q(ishlangan_masalalar__state='🟢 Passed')),  # Count passed masalalar for each user
-        total_ball=models.Sum('ishlangan_masalalar__masala__ball', filter=models.Q(ishlangan_masalalar__state='🟢 Passed'))  # Sum of balls for passed masalalar
+        num_passed=models.Count('ishlangan_masalalar', filter=models.Q(ishlangan_masalalar__state='🟢 Passed'), distinct=True),  # Count passed masalalar for each user
+        total_ball=models.Sum('ishlangan_masalalar__masala__ball', filter=models.Q(ishlangan_masalalar__state='🟢 Passed'), distinct=True)  # Sum of balls for passed masalalar
     ).order_by(
         '-total_ball'  # Order by total_ball descending
     )
+    users = sorted(users, key=lambda x: -x.get_all_balls())
+#    users = User.objects.annotate(
+#    total_ball=models.Sum(
+#        'ishlangan_masalalar__masala__ball',
+#        filter=models.Q(ishlangan_masalalar__state__contains="Passed")
+#    ),
+#    num_passed=models.Count("ishlangan_masalalar", filter=state__contains="Passed")
+#).distinct()
+#    users = User.objects.annotate(
+#    total_ball=models.Sum(
+#        models.F("ishlangan_masalalar__masala__ball"),
+#        filter=models.Q(ishlangan_masalalar__state__contains="Passed"),
+#        distinct=True
+#    )
+#).order_by("-total_ball")
     paginator = Paginator(users, 25)
     page_num = request.GET.get('page', 0)
     page = paginator.get_page(page_num)
@@ -143,3 +166,8 @@ def reyting(request):
         'total_pages':list(range(paginator.num_pages)),
         'total_page_count':paginator.num_pages
     })
+
+def masalalar_ballari(request, k_id):
+    kontest = Kontest.objects.get(id=k_id)
+    users = sorted(kontest.users.all(), key=lambda x: -sum(x.user.get_kontest_masala_status(k_id)[0][1]))
+    return render(request, "masalalar_ballari.html", {"kontest":kontest, 'users':users})

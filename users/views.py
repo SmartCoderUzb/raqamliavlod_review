@@ -8,7 +8,10 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import UserCreationForm, UserModelForm, CustomAuthenticationForm
 
 @csrf_exempt
+@login_required(login_url="login")
 def signup_view(request):
+    if request.user.is_authenticated:
+        return redirect("/")
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():

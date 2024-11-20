@@ -49,8 +49,10 @@ def get_user_masalalar_ball(user_id):
 
 @register.filter
 def user_has_related(user_id, kontest_id):
-    return User.objects.get(id=user_id).kontests.filter(kontest__id=kontest_id).exists()
-
+    try:
+        return User.objects.get(id=user_id).kontests.filter(kontest__id=kontest_id).exists()
+    except:
+        return False
 @register.filter
 def togri_yechimlar_soni(user_id):
     return User.objects.get(id=user_id).ishlangan_masalalar.filter(state='🟢 Passed').count()

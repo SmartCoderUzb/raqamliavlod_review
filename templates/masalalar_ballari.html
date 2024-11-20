@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7 Column Table</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+   
+    <table>
+        <thead>
+            <tr>
+                <th>Tartib raqam</th>
+                <th>Ism familiya</th>
+                <th>{{ kontest.masalalar.all.0 }}</th>
+                <th>{{ kontest.masalalar.all.1 }}</th>
+                <th>{{ kontest.masalalar.all.2 }}</th>
+                <th>{{ kontest.masalalar.all.3 }}</th>
+                <th>{{ kontest.masalalar.all.4 }}</th>
+                <th>Soni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                {% for b in user.user.get_kontest_masala_status %}
+                    {% if b.0 == kontest.id %}<td></td><td>{{ user.user.first_name }} {{ user.user.last_name }}</td>{% for ball in b.1 %}
+                    <td>{% if ball %}1{% else %}0{% endif %}</td>{% endfor %}<td>{{b.2}}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script>
+minus = 0
+trs = document.querySelector("tbody").children
+for(let i=0;i<trs.length;i++){
+    try{
+        trs[i].children[0].innerHTML = `${i+1-minus}`;
+    }catch(err){
+    minus++
+    }
+}
+</script>
+</body>
+</html>

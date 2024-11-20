@@ -3,7 +3,7 @@
 {% load increment %}
 
 
-{% block content %}
+{% block content %}{{page.num}}
 <div class="w-full h-full flex flex-col md:flex-row lg:flex-row flex-nowrap justify-between items-center md:justify-start md:items-start lg:justify-start lg:items-start overflow-hidden box-border">
     {% include 'left_menu.html' %}
     <div class="w-full h-full min-h-max flex flex-col justify-between items-start overflow-auto bg-[#F4F4F4] gap-5 box-border order-1 md:order-2 lg:order-2 xl:order-2 2xl-order-2 relative">
@@ -31,13 +31,14 @@
                 </a></div>
             <div class="w-full h-full flex flex-col justify-start items-start overflow-x-auto  gap-y-5">
                 <div class="w-full h-fit flex flex-col justify-start items-start rounded-xl gap-4 overflow-y-scroll scrollbar-none">
-                    {% for ruser in page %}
+                    {% for ruser in reyting %}
                         <a class="py-6 px-7 bg-white rounded-xl max-w-full w-full flex flex-row justify-between items-center break-words"
                             href="">
                             <section class="w-max flex flex-row justify-center items-center gap-3 md:gap-4 lg:gap-6">
                                 <span class=" min-w-[40px] min-h-[40px] md:min-w-[56px] md:min-h-[56px] lg:min-w-[64px] lg:min-h-[64px] bg-gray-100 rounded-full flex justify-center items-center text-xl">
                                     {{ ruser.first_name.0 }}
                                 </span>
+				{% if not page.has_prev %}
                                 {% if forloop.counter == 1 %}
                                     <p>🥇</p>
                                 {% elif forloop.counter == 2 %}
@@ -45,17 +46,18 @@
                                 {% elif forloop.counter == 3 %}
                                     <p>🥉</p>
                                 {% endif %}
+				{% endif %}
                                 <h1 class="text-base md:text-lg lg:text-xl font-semibold break-words w-full text-left">
                                     {{ ruser.first_name }} {{ ruser.last_name }}
                                 </h1>
                             </section>
                             <section class="w-max flex flex-col md:flex-row lg:flex-row justify-center items-center gap-4 text-center">
-                                <p class="text-center w-max flex">🔥{{ ruser.total_ball }}</p>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" width="20">
+                                <p class="text-center w-max flex">🔥{{ ruser.get_all_balls }}</p>
+                                <!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" width="20">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25">
                                     </path>
-                                </svg>
+                                </svg> -->
                             </section>
                         </a>
                     {% endfor %}
