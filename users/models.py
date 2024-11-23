@@ -19,7 +19,7 @@ class User(AbstractUser):
     tuman = models.CharField(max_length=100, default="Kiritilmagan")
     maktab = models.CharField(max_length=300, default="Kiritilmagan")
     def __str__(self):
-        return self.first_name
+        return self.first_name + self.last_name
     
     def get_all_balls(self):
         res = self.ishlangan_masalalar.filter(state='🟢 Passed').aggregate(models.Sum('masala__ball', distinct=True))['masala__ball__sum']

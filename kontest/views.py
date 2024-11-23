@@ -5,6 +5,8 @@ from django.core.paginator import Paginator
 from django.db import models
 from django.views.decorators.csrf import csrf_exempt
 
+from django.utils import timezone
+
 from .models import Kontest, Masala, UserKontestRelation, UserMasalaRelation
 from users.models import User
 from .forms import UserMasalaRelationForm
@@ -54,6 +56,7 @@ def kontest_detail(request, kontest_id):
     kontest = get_object_or_404(Kontest, id=kontest_id)
     if request.user.is_authenticated:
         if not UserKontestRelation.objects.filter(kontest=kontest, user=request.user).exists():
+            return redirect("/")
             UserKontestRelation.objects.create(kontest=kontest, user=request.user)
 
     return render(request, 'kontest_detail.html', {
@@ -87,7 +90,7 @@ def kontest_qatnashuvchilar(request, kontest_id):
 @check_contest_time
 def masala_detail(request, masala_id, cdown="03:00:00"):
     masala = get_object_or_404(Masala, id=masala_id)
-    if masala.hidden:
+    if not UserKontestRelation.objects.filter(user=request.user, kontest=masala.kontest).exists() or masala.kontest.start_time > timezone.now():
         return redirect("/")
     if request.method == "POST" and request.user.is_authenticated:
         form = UserMasalaRelationForm(request.POST, request.FILES)

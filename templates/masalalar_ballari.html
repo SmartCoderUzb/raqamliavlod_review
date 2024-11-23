@@ -39,14 +39,33 @@
                 <th>{{ kontest.masalalar.all.3 }}</th>
                 <th>{{ kontest.masalalar.all.4 }}</th>
                 <th>Soni</th>
+		{% if request.user.is_authenticated %}
+		<th>Manzil</th>
+		<th>Telegram</th>
+		<th>Telefon</th>
+		<th>Maktab</th>
+		{% endif %}
             </tr>
         </thead>
         <tbody>
             {% for user in users %}
             <tr>
                 {% for b in user.user.get_kontest_masala_status %}
-                    {% if b.0 == kontest.id %}<td></td><td>{{ user.user.first_name }} {{ user.user.last_name }}</td>{% for ball in b.1 %}
-                    <td>{% if ball %}1{% else %}0{% endif %}</td>{% endfor %}<td>{{b.2}}</td>
+                    {% if b.0 == kontest.id %}
+			<td></td>
+			<td>{{ user.user.first_name }} {{ user.user.last_name }}</td>
+			{% for ball in b.1 %}
+                    	    <td>
+				{% if ball %}1{% else %}0{% endif %}
+			    </td>
+			{% endfor %}
+			<td>{{b.2}}</td>
+			{% if request.user.is_authenticated %}
+			<td>{{ user.user.viloyat }} - {{ user.user.tuman }}</td>
+			<td>{{ user.user.telegram }}</td>
+			<td>{{ user.user.telefon }}</td>
+			<td>{{ user.user.maktab }}</td>
+			{% endif %}
                     {% endif %}
                 {% endfor %}
             </tr>

@@ -13,6 +13,7 @@ class RunCmdGenerator:
             stderr=subprocess.PIPE
         )
         stdout, stderr = process.communicate(input=input_string)
+        print(stdout, stderr)
         process.wait()
         if process.returncode != 0:
             raise Exception(f"Error occurred: {stderr}")

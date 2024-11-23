@@ -14,5 +14,5 @@ urlpatterns = [
     path('masala/<int:masala_id>/', masala_detail, name='masala-detail'),
     path('turnir-jadvali/<int:kontest_id>/', turnir_jadvali, name='turnir_jadvali'),
     path('reyting/', reyting, name='reyting'),
-    path("masalalar_ballari/<int:k_id>/", masalalar_ballari, name="masalalar_ballari")
+    path("masalalar_ballari/<int:k_id>/", masalalar_ballari, name="masalalar_ballari"),
 ]

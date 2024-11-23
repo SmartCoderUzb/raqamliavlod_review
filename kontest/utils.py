@@ -1,6 +1,7 @@
 from django.conf import settings
 from .language_support import RunCmdGenerator
 import requests
+import json
 import time
 import shutil
 import pathlib
@@ -27,7 +28,7 @@ class PaizaIO:
             "api_key": PaizaIO.api_key,
             "source_code": code,
             "language": language,
-            "input": stdin,
+            "input": stdin.replace('\r', ''),
             "options": options
         }
 
@@ -79,7 +80,7 @@ class Code:
         first_input, first_output = self.inputs[0], self.outputs[0]
 
         output = self.send(first_input)
-        if output == first_output:
+        if first_output == output:
             return "Correct code"
         elif output == "":
             return "Error code"
@@ -112,13 +113,16 @@ class Code:
 
                 for index in range(len(self.inputs)):
                     file_input, file_output = self.inputs[index], self.outputs[index]
+                    file_input = file_input.replace("\r", "")
                     output = func(script_file, file_input)
 
                     if output == "":
                         shutil.rmtree(str(folder))
+                        print("Error code")
                         return "Error code"
                     elif output != file_output:
                         shutil.rmtree(str(folder))
+                        print("Incorrect code")
                         return "Incorrect code"
                 shutil.rmtree(str(folder))
                 return "Correct code"
